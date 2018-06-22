@@ -5,7 +5,9 @@ urlpatterns = [
     path('', views.index, name="index"),
     path('<int:blockid>/', views.showBlock, name="oneblock"),
     path('user/<int:userid>/', views.showBlockUsers, name="listblockuser"),
-    path('serachList', views.searchListBlock, name="searchlistblock"),
+
+    path('serachList/', views.searchListBlock, name="searchlistblock"),
+    path('serachList/<str:searchtext>', views.showSearchlist, name="showSearchlist"),
 
     path('<int:blockid>/comment', views.commetPost, name="commentPost"),
 

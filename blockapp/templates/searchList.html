@@ -2,15 +2,12 @@
 
 {% block title %}ListBlock search: {{searchname}}{% endblock %}
 
-{% block nav %}
-
-{% endblock %}
-
 {% block content %}
+    {{search}}
     {% for block in listBlock %}
         <div class="row">
             <div class="block">
-                <div class="title">{{forloop.counter}}. <a href="{% url 'blockapp:oneblock' block.id %}">{{block.title}}</a></div>
+                <div class="title"><a href="{% url 'blockapp:oneblock' block.id %}">{{block.title}}</a></div>
                 <br>
                 <div class="authname">Create by : {{block.authId}}</div>
                 <div class="date">Date create : {{block.date}}</div>
@@ -23,6 +20,15 @@
         {% endif %}
         <br />
     {% endfor %}
+    <div class="pagination">
+        {% for i in paginationAll.rangPage %}
+            {% if i == paginationAll.curPage %}
+                <strong><a href="?page={{i}}">{{i}}</a></strong>
+            {% else %}
+                <a href="?page={{i}}">{{i}}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
     {% if login.isLogin %}
         <button><a href="{% url 'blockapp:createblockform' %}">ADD BLOCK</a></button>
     {% endif %}

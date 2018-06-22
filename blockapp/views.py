@@ -1,6 +1,7 @@
 from django.shortcuts import render , get_object_or_404 
 from django.http import HttpResponse , HttpResponseRedirect , Http404
 from django.urls import reverse
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.contrib.auth.models import Permission
 from django.db.models import Q
 
@@ -24,8 +25,15 @@ def isWhiteSpaceOrEmpty(string):
     else:
         return False
 
+def countPage(listdata):
+    return {
+        "totalPage" : listdata.paginator.num_pages,
+        "curPage" : listdata.number,
+        "rangPage" : listdata.paginator.page_range
+    }
+
 def index(request):
-    print(isLoginAndPermission(request))
+
     if(request.user.is_superuser):
         listBlock = Blocktable.objects.order_by('-date')
 
@@ -36,15 +44,23 @@ def index(request):
         filterlist = Blocktable.objects.filter( isPrivate = 0)
         listBlock = filterlist.order_by('-date')
 
-    return render(request,'index.html',{"listblock" : listBlock, "login" : isLoginAndPermission(request) })
+    paginator = Paginator(listBlock,5)
+    page = request.GET.get('page')
+    listBlocks = paginator.get_page(page)
+
+
+    return render(request,'index.html',{"listblock" : listBlocks, "login" : isLoginAndPermission(request), "paginationAll": countPage(listBlocks) })
 
 def showBlockUsers(request, userid):
     
     filterlistBlock = Blocktable.objects.filter(authId=userid)
     listBlock = filterlistBlock.order_by('-date')
 
+    paginator = Paginator(listBlock,5)
+    page = request.GET.get('page')
+    listBlocks = paginator.get_page(page)
 
-    return render(request,'listblockuser.html',{"listblock" : listBlock, "login" : isLoginAndPermission(request) })
+    return render(request,'listblockuser.html',{"listblock" : listBlocks, "login" : isLoginAndPermission(request), "paginationAll": countPage(listBlocks) })
 
 def showBlock(request, blockid):
 
@@ -124,19 +140,36 @@ def commetPost(request, blockid):
     return HttpResponseRedirect(reverse('blockapp:oneblock', args=(blockid,)))
 
 def searchListBlock(request):
-
+    
     text = request.POST.get("search")
+    
+    # paginator = Paginator(listblockSearch,5)
+    # page = request.GET.get('page')
+    # print(page)
+    # listBlocks = paginator.get_page(page)
+    # print(listBlocks)
+
+    # return render(request,'searchList.html',{"searchname":text , "listBlock" : listblockSearch, "login" : isLoginAndPermission(request)})
+
+    return HttpResponseRedirect(reverse("blockapp:showSearchlist",args=[text]))
+
+def showSearchlist(request, searchtext):
+
     if request.user.is_superuser :
-        filterListBlockSearch = Blocktable.objects.filter(title__contains=text)
+        filterListBlockSearch = Blocktable.objects.filter(title__contains=searchtext)
         listblockSearch = filterListBlockSearch.order_by('-date')
 
     elif isLoginAndPermission(request)["isLogin"] :
-        filterListBlockSearch = Blocktable.objects.filter(title__contains=text)
+        filterListBlockSearch = Blocktable.objects.filter(title__contains=searchtext)
         filterlist = filterListBlockSearch.filter(Q(isPrivate=0) | Q(authId=request.session["_auth_user_id"]))
         listblockSearch = filterlist.order_by('-date')
 
     else: 
-        filterListBlockSearch = Blocktable.objects.filter(title__contains=text ,isPrivate= 0)
+        filterListBlockSearch = Blocktable.objects.filter(title__contains=searchtext ,isPrivate= 0)
         listblockSearch = filterListBlockSearch.order_by('-date')
+    
+    paginator = Paginator(listblockSearch,5)
+    page = request.GET.get('page')
+    listBlocks = paginator.get_page(page)
 
-    return render(request,'searchList.html',{"searchname":text , "listBlock" : listblockSearch, "login" : isLoginAndPermission(request)})
+    return render(request,'searchList.html',{"searchname":searchtext , "listBlock" : listBlocks, "login" : isLoginAndPermission(request) ,"paginationAll": countPage(listBlocks) })
