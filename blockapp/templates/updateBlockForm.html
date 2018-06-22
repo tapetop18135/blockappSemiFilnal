@@ -1,0 +1,33 @@
+{% extends "base_block.html" %}
+
+{% block title %}update {{blockone.title}}{% endblock %}
+
+{% block content %}
+    <form action="{% url 'blockapp:updateblock' blockone.id %}" method="POST">
+    {% csrf_token %}
+        <div class="title">Title : <input name="title" type="text" value="{{blockone.title}}"></div>
+        <div class="content"><textarea name="content" id="" cols="30" rows="10">{{blockone.content}}</textarea></div>
+
+        <p>Show </p>
+        {% if blockone.isPrivate == 0 %}
+            <div class="myradio">
+                <label for="public"></label><input type="radio" name="status" value="0" checked> Public</label>
+                <br>
+                <label for="private"></label><input type="radio" name="status" value="1"> Private</label>
+            </div>
+        {% else %}
+            <div class="myradio">
+                <label for="public"></label><input type="radio" name="status" value="0" > Public</label>
+                <br>
+                <label for="private"></label><input type="radio" name="status" value="1" checked> Private</label>
+            </div>
+        {% endif %}
+        <br>
+        <div class="date">{{blockone.date}}</div>
+        <br>
+        <button><a href="{% url 'blockapp:oneblock' blockone.id %}">BACK</a></button>
+        <input type="submit" value="UPDATE">
+    </form>
+    <br>
+    
+{% endblock %}

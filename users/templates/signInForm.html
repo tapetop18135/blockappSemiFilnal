@@ -1,0 +1,25 @@
+{% extends 'base_users.html' %}
+
+{% block title %}SignInForm{% endblock %}
+
+{% block content %}
+    <div>
+        <h1>Sign In</h1>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div>
+                <label for="username">Email : </label>
+                <input id="username" type="text" name="username">
+            </div>
+            <br>
+            <div>
+                <label for="password">Password : </label>
+                <input id="password" type="password" name="password">
+            </div>
+            <br>
+            <div>
+                <input type="submit" value="LOG IN">
+            </div>
+        </form>
+    </div>
+{% endblock %}

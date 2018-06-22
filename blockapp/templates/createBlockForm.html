@@ -1,0 +1,28 @@
+{% extends "base_block.html" %}
+
+{% block title %}Block Form{% endblock %}
+
+{% block content %}
+    
+    <form action="{% url 'blockapp:createblock' %}" method="post">
+    {% csrf_token %}
+        <label for="title">Title : </label>
+        <input id="title" type="text" name="title" for='title' placeholder="Enter title">
+        <br />
+        <br />
+        <textarea name="content" id="content" cols="30" rows="10" placeholder="Enter Content"></textarea>
+        <br />
+        <p>Show </p>
+
+        <div class="myradio">
+            <label for="public"></label><input type="radio" name="status" value="0" checked> Public</label>
+            <br>
+            <label for="private"></label><input type="radio" name="status" value="1"> Private</label>
+        </div>
+        
+        <br />
+        <br />
+        <input type="submit" value="SUBMIT">
+    </form> 
+
+{% endblock %}

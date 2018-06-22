@@ -1,0 +1,31 @@
+{% extends "base_block.html" %}
+
+{% block title %}ListBlock{% endblock %}
+
+{% block nav %}
+
+{% endblock %}
+
+{% block content %}
+
+    {% for block in listblock %}
+        <div class="row">
+            <div class="block">
+                <div class="title">{{forloop.counter}}. <a href="{% url 'blockapp:oneblock' block.id %}">{{block.title}}</a></div>
+                <br>
+                <div class="authname">Create by : {{block.authId}}</div>
+                <div class="date">Date create : {{block.date}}</div>
+
+                {% if block.isPrivate == 1 %}
+                    <div class="status">status : <span style="color: red">Private</span></div>
+                {% else %}
+                    <div class="status">status : <span style="color: green">Public</span></div>
+                {% endif %}
+            </div>
+        </div>
+        <br />
+    {% endfor %}
+    {% if login.isLogin %}
+        <button><a href="{% url 'blockapp:createblockform' %}">ADD BLOCK</a></button>
+    {% endif %}
+{% endblock %}

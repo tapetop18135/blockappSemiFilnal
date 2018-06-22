@@ -1,0 +1,58 @@
+{% extends "base_block.html" %}
+
+{% block title %}title : {{blockone.title}}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="title">Title : {{blockone.title}}</div>
+        <div class="content"><p>{{blockone.content}}</p></div>
+        <div class="date">{{blockone.date}}</div>
+        {% if blockone.isPrivate == 1 %}
+            <div class="status">status : <span style="color: red">Private</span></div>
+        {% else %}
+            <div class="status">status : <span style="color: green">Public</span></div>
+        {% endif %}
+    </div>
+    
+    <br>
+    <h3>Comment</h3>
+    {% if listComment %}
+        <div class="listCommet">
+            {% for comment in listComment %}
+                <div class="commet">
+                    <p>{{forloop.counter}}. {{comment.content}}</p>
+                    commnet by : {{comment.authId}}
+                    date : {{comment.date}}
+                </div>
+            {% endfor %}
+            <br>
+            <br>
+        </div>
+    {% else %}
+        No Comment.
+        <br>
+        <br>
+    {% endif %}
+    <button><a href="/blockapp">BACK</a></button>
+        {% if login.canEdit %}
+            <button><a href="{% url 'blockapp:updateblockform' blockone.id %}">EDIT</a></button>
+            <button><a href="{% url 'blockapp:deleteblock' blockone.id %}">DELETE</a></button>
+        {% endif %}    
+    <br>
+    <br>
+    {% if login.isLogin %}
+        <div class="commentblock">
+            <h3>Comment Block</h3>
+            <form action="{% url 'blockapp:commentPost' blockone.id %}" method="POST">
+                {% csrf_token %}
+                <div>
+                    <textarea name="commentContent" cols="70" rows="7" placeholder="Enter comment"></textarea>
+                </div>
+                <br>
+                <input type="submit" value="COMMENT">
+                <br><br>
+            </form>
+        </div>
+    {% endif %}
+
+{% endblock %}
