@@ -54,7 +54,7 @@ def showBlock(request, blockid):
     oneBlock = get_object_or_404(Blocktable, id=blockid)
     login = isLoginAndPermission(request)
     
-    if((oneBlock.authId == isLoginAndPermission(request)["username"] and request.user.has_perm("blockapp.add_blocktable"))or request.user.is_superuser):
+    if((oneBlock.authId == isLoginAndPermission(request)["username"])or request.user.is_superuser):
         login["canEdit"] = True
     else:
         login["canEdit"] = False
